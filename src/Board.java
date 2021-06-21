@@ -38,9 +38,17 @@ public class Board extends JPanel {
 
     public Board(JLabel statusbar) {
         this.statusbar = statusbar;
+        allCells = ROWS_COUNT * COLUMNS_COUNT;
+        InitialiseBoard();
         LoadSprites();
         SetupBoard();
         newGame();
+    }
+
+    public int[] GetBoard(){ return board;}
+    public void SetBoard(int[] newBoard){
+        this.board = newBoard;
+        repaint();
     }
 
     private void SetupBoard() {
@@ -60,28 +68,17 @@ public class Board extends JPanel {
         var random = new Random();
         playing = true;
         minesLeft = MINES_COUNT;
-
-        allCells = ROWS_COUNT * COLUMNS_COUNT;
-        board = new int[allCells];
-
-        for (int i = 0; i < allCells; i++) {
-            board[i] = CELL_UNDISCOVERED;
-        }
-
         statusbar.setText("Mines Left: " + minesLeft);
 
+
         int i = 0;
-
         while (i < MINES_COUNT) {
-
             int position = (int) (allCells * random.nextDouble());
-
             if ((position < allCells) && (board[position] != COVERED_MINE_CELL)) {
-
-                int current_col = position % COLUMNS_COUNT;
                 board[position] = COVERED_MINE_CELL;
                 i++;
 
+                int current_col = position % COLUMNS_COUNT;
                 if (current_col > 0) {
                     cell = position - 1 - COLUMNS_COUNT;
                     if (cell >= 0) {
@@ -139,6 +136,13 @@ public class Board extends JPanel {
                     }
                 }
             }
+        }
+    }
+
+    private void InitialiseBoard() {
+        board = new int[allCells];
+        for (int i = 0; i < allCells; i++) {
+            board[i] = CELL_UNDISCOVERED;
         }
     }
 
@@ -269,8 +273,7 @@ public class Board extends JPanel {
                     }
                 }
 
-                g.drawImage(sprites[cell], (j * CELL_SIZE),
-                        (i * CELL_SIZE), this);
+                g.drawImage(sprites[cell], (j * CELL_SIZE), (i * CELL_SIZE), this);
             }
         }
 
@@ -298,7 +301,6 @@ public class Board extends JPanel {
             boolean doRepaint = false;
 
             if (!playing) {
-
                 newGame();
                 repaint();
             }
